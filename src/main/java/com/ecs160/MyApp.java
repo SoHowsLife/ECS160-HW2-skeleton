@@ -2,6 +2,7 @@ package com.ecs160;
 
 
 import com.ecs160.hw2.*;
+import com.ecs160.hw2.Thread;
 import com.ecs160.persistence.Session;
 import org.apache.commons.cli.*;
 
@@ -37,12 +38,14 @@ public class MyApp {
                 addPosts(session, post);
             }
             session.persistAll();
+            Post test = new Thread(1);
+            session.load(test);
+            printPosts(test, " ");
 
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("Json file not found.");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException |
+                 InstantiationException e) {
             throw new RuntimeException(e);
         }
     }
@@ -52,5 +55,13 @@ public class MyApp {
         for (Post reply : parent.getReplies()){
             addPosts(session, reply);
         }
+    }
+
+    private static void printPosts(Post parent, String prefix){
+        System.out.println(prefix + parent.getContent());
+        for (Post reply : parent.getReplies()){
+            printPosts(reply, "-->" + prefix);
+        }
+
     }
 }

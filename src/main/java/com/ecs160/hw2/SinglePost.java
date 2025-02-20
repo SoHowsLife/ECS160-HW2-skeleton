@@ -26,6 +26,15 @@ public class SinglePost implements Post{
         this.timestamp = "2000-01-01T00:00:00.000Z";
     }
 
+    public SinglePost(Integer postId){
+        this.postId = postId;
+        this.uri = "";
+        this.cid = "";
+        this.author = "";
+        this.content = "";
+        this.timestamp = "2000-01-01T00:00:00.000Z";
+    }
+
     public SinglePost(Integer postId, String uri, String cid, String author, String content, String timestamp) {
         this.postId = postId;
         this.uri = uri;
