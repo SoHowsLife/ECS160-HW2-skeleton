@@ -16,7 +16,7 @@ public class Thread implements Post{
     private final String content;
     private final Integer replyCount;
     private final String timestamp;
-    @PersistableListField(className = "Post")
+    @PersistableListField(className = "com.ecs160.hw2.Thread")
     private final List<Post> replies;
 
     public Thread() {

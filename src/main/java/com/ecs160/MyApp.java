@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Scanner;
 
 public class MyApp {
     public static void main(String[] args) throws FileNotFoundException, URISyntaxException, NoSuchFieldException {
@@ -38,14 +39,21 @@ public class MyApp {
                 addPosts(session, post);
             }
             session.persistAll();
-            Post test = new Thread(1);
-            session.load(test);
-            printPosts(test, " ");
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter a post ID to retrieve: ");
+            int postId = scanner.nextInt();
+
+            Post post = new Thread(postId);
+            session.load(post);
+            printPosts(post, "> ");
 
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("Json file not found.");
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException |
                  InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -60,7 +68,7 @@ public class MyApp {
     private static void printPosts(Post parent, String prefix){
         System.out.println(prefix + parent.getContent());
         for (Post reply : parent.getReplies()){
-            printPosts(reply, "-->" + prefix);
+            printPosts(reply, prefix + "--> ");
         }
 
     }
