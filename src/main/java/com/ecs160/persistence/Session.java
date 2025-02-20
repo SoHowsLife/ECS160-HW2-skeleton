@@ -20,17 +20,53 @@ import redis.clients.jedis.Jedis;
 public class Session {
 
     private Jedis jedisSession;
+    private List<Object> objQueue;
 
     private Session() {
-        jedisSession = new Jedis("localhost", 6379);;
+        jedisSession = new Jedis("localhost", 6379);
+        objQueue = new ArrayList<>();
     }
-
 
     public void add(Object obj) {
+        if(obj.getClass().isAnnotationPresent(Persistable.class)){
+            objQueue.add(obj);
+        }
     }
 
 
-    public void persistAll()  {
+    public void persistAll() throws IllegalAccessException, ClassNotFoundException {
+        for(Object obj : objQueue){
+            Class<?> clazz = obj.getClass();
+            Integer id = null;
+            Map<String,String> dataMap = new HashMap<>();
+            for (Field field : obj.getClass().getDeclaredFields()){
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(PersistableId.class)){
+                    id = field.getInt(obj);
+                } else if (field.isAnnotationPresent(PersistableField.class)) {
+                    dataMap.put(field.getName(), String.valueOf(field.get(obj)));
+                }
+                else if (field.isAnnotationPresent(PersistableListField.class)){
+                    List<?> list = (List<?>) field.get(obj);
+                    if (list != null){
+                        StringBuilder listId = new StringBuilder();
+                        for (Object item : list){
+                            for (Field itemField : item.getClass().getDeclaredFields()){
+                                if (itemField.isAnnotationPresent(PersistableId.class)){
+                                    itemField.setAccessible(true);
+                                    listId.append(String.valueOf(itemField.getInt(item))).append(",");
+                                    break;
+                                }
+                            }
+                        }
+                        dataMap.put(field.getName(), listId.toString());
+                    }
+                }
+            }
+            if (id != null){
+                jedisSession.hmset(String.valueOf(id), dataMap);
+            }
+        }
     }
 
 

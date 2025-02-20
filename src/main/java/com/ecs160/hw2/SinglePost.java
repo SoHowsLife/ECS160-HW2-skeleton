@@ -34,11 +34,17 @@ public class SinglePost implements Post{
         this.timestamp = timestamp;
     }
 
+
+
     @Override
     public List<Post> getReplies() {
         return List.of();
     }
 
+    @Override
+    public Integer getPostId() {
+        return postId;
+    }
     @Override
     public String getUri() {
         return uri;

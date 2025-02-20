@@ -16,7 +16,7 @@ public class Thread implements Post{
     private final String content;
     private final Integer replyCount;
     private final String timestamp;
-    @PersistableListField
+    @PersistableListField(className = "Post")
     private final List<Post> replies;
 
     public Thread() {
@@ -39,6 +39,11 @@ public class Thread implements Post{
         this.replies = replies;
     }
 
+    @Override
+    public Integer getPostId() {
+        return postId;
+    }
+    
     @Override
     public String getUri() {
         return uri;

@@ -7,6 +7,7 @@ import java.util.List;
 
 @Persistable
 public interface Post {
+    Integer getPostId();
     String getUri();
     String getCid();
     String getAuthor();
