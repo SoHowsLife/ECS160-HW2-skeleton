@@ -27,12 +27,15 @@ public class Session {
         objQueue = new ArrayList<>();
     }
 
+    public static Session getInstance(){
+        return new Session();
+    }
+
     public void add(Object obj) {
         if(obj.getClass().isAnnotationPresent(Persistable.class)){
             objQueue.add(obj);
         }
     }
-
 
     public void persistAll() throws IllegalAccessException, ClassNotFoundException {
         for(Object obj : objQueue){
@@ -42,7 +45,7 @@ public class Session {
             for (Field field : obj.getClass().getDeclaredFields()){
                 field.setAccessible(true);
                 if (field.isAnnotationPresent(PersistableId.class)){
-                    id = field.getInt(obj);
+                    id = (Integer) field.get(obj);
                 } else if (field.isAnnotationPresent(PersistableField.class)) {
                     dataMap.put(field.getName(), String.valueOf(field.get(obj)));
                 }
@@ -54,7 +57,7 @@ public class Session {
                             for (Field itemField : item.getClass().getDeclaredFields()){
                                 if (itemField.isAnnotationPresent(PersistableId.class)){
                                     itemField.setAccessible(true);
-                                    listId.append(String.valueOf(itemField.getInt(item))).append(",");
+                                    listId.append(String.valueOf(itemField.get(item))).append(",");
                                     break;
                                 }
                             }

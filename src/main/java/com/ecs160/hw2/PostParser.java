@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostParser {
+    private static int currentId = 0;
     public List<Post> parseJson(String fileName) throws FileNotFoundException {
         List<Post> posts = new ArrayList<>();
         try {
@@ -30,6 +31,8 @@ public class PostParser {
     }
     private Post parsePost(JsonObject postObject) {
         JsonObject postData = postObject.get("post").getAsJsonObject();
+        Integer postId = currentId;
+        currentId++;
         String uri = postData.get("uri").getAsString();
         String cid = postData.get("cid").getAsString();
         String author = postData.get("author").getAsJsonObject().get("handle").getAsString();
@@ -42,7 +45,7 @@ public class PostParser {
         Post post;
 
         if (replies == null || replies.isEmpty()) {
-            post = new SinglePost(uri, cid, author, content, timestamp);
+            post = new SinglePost(postId, uri, cid, author, content, timestamp);
         }
         else{
             Integer replyCount = postData.get("replyCount").getAsInt();
@@ -51,7 +54,7 @@ public class PostParser {
                 Post reply = parsePost(replies.get(i).getAsJsonObject());
                 replyPosts.add(reply);
             }
-            post = new Thread(uri, cid, author, content, replyCount, timestamp, replyPosts);
+            post = new Thread(postId, uri, cid, author, content, replyCount, timestamp, replyPosts);
         }
         return post;
     }

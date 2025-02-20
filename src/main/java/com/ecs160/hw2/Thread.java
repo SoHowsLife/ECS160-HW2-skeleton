@@ -29,7 +29,8 @@ public class Thread implements Post{
         this.replies = List.of();
     }
 
-    public Thread(String uri, String cid, String author, String content, Integer replyCount, String timestamp, List<Post> replies) {
+    public Thread(Integer postId, String uri, String cid, String author, String content, Integer replyCount, String timestamp, List<Post> replies) {
+        this.postId = postId;
         this.uri = uri;
         this.cid = cid;
         this.author = author;
